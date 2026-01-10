@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "buffer": "^6.0.3",
-    "react-native-get-random-values": "^2.0.0",
-    "viem": "^2.44.1"
-  }
-}

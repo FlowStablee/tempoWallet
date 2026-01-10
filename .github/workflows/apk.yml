@@ -1,33 +1,47 @@
 name: Build Tempo Wallet APK
+
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+
 jobs:
-  build-android:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      # Setup Java is required for React Native Android builds
-      - name: Setup Java
-        uses: actions/setup-java@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          node-version: 18
 
-      - name: Install npm dependencies
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Dependencies
         run: |
           npm install
 
-      - name: Build Android APK
+      - name: Generate Android Project
+        run: |
+          npx react-native doctor
+          npx react-native config
+
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleRelease
-      
-      # THIS IS THE FIX: Using v4 instead of v3
-      - name: Upload Artifact
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: tempo-wallet-apk

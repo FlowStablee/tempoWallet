@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: 
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,18 +17,26 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
       - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build Android APK
+      - name: Build Android APK (High RAM)
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease
+          # Ye command 4GB RAM use karegi taaki crash na ho
+          ./gradlew clean assembleRelease -Dorg.gradle.jvmargs="-Xmx4608m -XX:MaxMetaspaceSize=1024m" --no-daemon
+        env:
+          # Node.js ko bhi extra memory denge
+          NODE_OPTIONS: "--max_old_space_size=4096"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: tempo-wallet-apk
           path: android/app/build/outputs/apk/release/app-release.apk
-          

@@ -17,23 +17,18 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      - name: Install Dependencies
-        run: |
-          npm install
-
-      - name: Generate Android Project
-        run: |
-          npx react-native doctor
-          npx react-native config
-
       - name: Install Android SDK
         uses: android-actions/setup-android@v3
+
+      - name: Install JS dependencies
+        run: |
+          npm install
 
       - name: Build APK
         run: |
